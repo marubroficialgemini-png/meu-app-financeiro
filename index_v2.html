@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Note-makPro</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00e676">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style> </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div id="p-home" class="page active">
+            <div class="brand">Note-makPro</div>
+            
+            <div class="card-saldo">
+                <small>SALDO DISPONÍVEL</small>
+                <h1 id="S-VAL">R$ 0,00</h1>
+            </div>
+            
+            <div class="card">
+                <small>META: <span id="M-NOME">---</span></small>
+                <div style="background: var(--input); height: 8px; border-radius: 10px; margin-top: 12px; overflow: hidden; border: 1px solid var(--border);">
+                    <div id="M-BAR" style="background: var(--main); width: 0%; height: 100%; border-radius: 10px; transition: width 0.4s ease"></div>
+                </div>
+            </div>
+
+            <div class="section-title">Metas Próximas</div>
+            <div id="DASH-METAS" class="carousel"></div>
+
+            <div class="section-title">Gastos Recentes</div>
+            <div id="DASH-GASTOS" class="dash-list"></div>
+
+            <div class="section-title">Última Nota</div>
+            <div id="DASH-NOTA" class="card" style="cursor: pointer; padding: 16px;"></div>
+        </div>
+
+        <div id="p-metas" class="page">
+            <div class="brand">Metas Alvo</div>
+            
+            <div class="card" style="border-color: rgba(0, 230, 118, 0.2);">
+                <small style="color: var(--main);">Meta Ativa Atualmente</small>
+                <h3 id="PAGE-M-NOME" style="margin: 10px 0 5px 0; font-size: 20px;">---</h3>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-sec); margin-bottom: 5px;">
+                    <span>Progresso do Objetivo:</span>
+                    <span id="PAGE-M-PERC" style="color: var(--main); font-weight: bold;">0%</span>
+                </div>
+                <div style="background: var(--input); height: 8px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border);">
+                    <div id="PAGE-M-BAR" style="background: var(--main); width: 0%; height: 100%; border-radius: 10px; transition: width 0.4s ease"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <small>Criar Nova Meta</small>
+                <input type="text" id="in-m-n" placeholder="Nome da Meta (Ex: PlayStation 5)">
+                <input type="number" id="in-m-v" placeholder="Valor Alvo R$">
+                <button onclick="saveM()">Definir Objetivo</button>
+            </div>
+
+            <div class="section-title">Todas as Metas</div>
+            <div id="PAGE-METAS-LIST" class="dash-list" style="margin-bottom: 30px;"></div>
+        </div>
+
+        <div id="p-banca" class="page">
+            <div class="brand">Ajuste de Banca</div>
+            
+            <div class="card" style="text-align: center; border-color: rgba(0, 230, 118, 0.15);">
+                <small>Banca Atual em Caixa</small>
+                <h2 id="PAGE-B-VAL" style="margin: 10px 0 0 0; font-size: 28px; color: white; font-weight: 700;">R$ 0,00</h2>
+            </div>
+
+            <div class="card">
+                <small>Redefinir Capital</small>
+                <input type="number" id="in-s-v" placeholder="Insira o Novo Saldo Total R$">
+                <button onclick="saveS()">Atualizar Saldo</button>
+            </div>
+
+            <div class="card" style="background: transparent; border: 1px dashed var(--border); padding: 15px;">
+                <span style="font-size: 12px; color: var(--text-sec); display: block; text-align: center; line-height: 1.4;">
+                    ⚠️ Alterar a banca redefine o montante principal exibido no painel de Início e recalcula o progresso das metas activas.
+                </span>
+            </div>
+        </div>
+
+        <div id="p-gastos" class="page">
+            <div class="brand" style="color: var(--gasto);">Lançar Saídas</div>
+            
+            <div class="card" style="border-color: rgba(255, 82, 82, 0.2); text-align: center;">
+                <small style="color: var(--gasto);">Histórico total debitado</small>
+                <h2 id="PAGE-G-TOTAL" style="margin: 10px 0 0 0; font-size: 26px; color: white; font-weight: 700;">R$ 0,00</h2>
+            </div>
+
+            <div class="card" style="border-color: rgba(255, 82, 82, 0.15);">
+                <small>Detalhes do Débito</small>
+                <input type="text" id="g-d" class="input-gasto" placeholder="Descrição do Gasto (Ex: Lanche)">
+                <input type="number" id="g-v" class="input-gasto" placeholder="Valor da Saída R$">
+                <button class="btn-gasto" onclick="addG()">Subtrair da Banca</button>
+            </div>
+
+            <div class="section-title">Fluxo Recente</div>
+            <div id="PAGE-GASTOS-LIST" class="dash-list" style="margin-bottom: 30px;"></div>
+        </div>
+
+        <div id="p-notas" class="page">
+            <div class="brand">Bloco de Notas</div>
+            
+            <div class="card" style="text-align: center; border-color: rgba(0, 230, 118, 0.15);">
+                <small>Notas Arquivadas no Sistema</small>
+                <h2 id="PAGE-N-COUNT" style="margin: 10px 0 0 0; font-size: 26px; color: white; font-weight: 700;">0</h2>
+            </div>
+
+            <div class="card">
+                <small>Nova Anotação</small>
+                <input type="text" id="n-t" placeholder="Título da Nota">
+                <textarea id="n-c" rows="5" placeholder="Digite os detalhes da sua anotação aqui..."></textarea>
+                <button onclick="saveN()">Arquivar no Banco</button>
+            </div>
+
+            <div class="section-title">Notas Recentes</div>
+            <div id="PAGE-NOTAS-LIST" class="dash-list" style="margin-bottom: 30px;"></div>
+        </div>
+
+        <div id="p-pasta" class="page">
+            <div class="brand">Banco de Arquivos</div>
+            
+            <div class="card" style="text-align: center; border-color: var(--border);">
+                <small>Entradas de Dados Registradas</small>
+                <h2 id="PAGE-P-COUNT" style="margin: 10px 0 0 0; font-size: 26px; color: white; font-weight: 700;">0 itens</h2>
+            </div>
+
+            <div class="section-title">Todos os Registros</div>
+            <div id="LISTA" class="dash-list" style="margin-bottom: 25px;"></div>
+            
+            <div style="padding: 10px 0 30px 0;">
+                <button style="background: transparent; color: #ff5252; border: 1px dashed rgba(255,82,82,0.4); font-size: 13px; padding: 12px;" onclick="clearAll()">Destruir Todos os Dados (Limpar Tudo)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="noteModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 id="m-title" style="margin-top:0; color:var(--main);"></h3>
+            <p id="m-body" style="white-space:pre-wrap; word-break:break-all; max-height:200px; overflow-y:auto; color: white; opacity: 0.9;"></p>
+            <button style="background:#1a2329; color:white;" onclick="closeModal()">Fechar</button>
+        </div>
+    </div>
+
+    <nav class="nav">
+        <div class="nav-item active" onclick="nav('p-home', this)"><b>🏠</b><span>INÍCIO</span></div>
+        <div class="nav-item" onclick="nav('p-metas', this)"><b>🎯</b><span>METAS</span></div>
+        <div class="nav-item" onclick="nav('p-banca', this)"><b>🎓</b><span>BANCA</span></div>
+        <div class="nav-item" onclick="nav('p-gastos', this)"><b>💵</b><span>GASTOS</span></div>
+        <div class="nav-item" onclick="nav('p-notas', this)"><b>📒</b><span>NOTAS</span></div>
+        <div class="nav-item" onclick="nav('p-pasta', this)"><b>📁</b><span>PASTA</span></div>
+    </nav>
+
+    <script>
+        // Registra o Service Worker para o app funcionar de verdade
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log("Service Worker Activo!"))
+            .catch((err) => console.log("Erro ao registrar SW:", err));
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
